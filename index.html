@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Boutique Manager</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">BM</div>
+        <div>
+          <h1>Boutique Manager</h1>
+          <p class="brand-sub">Front-only</p>
+        </div>
+      </div>
+
+      <nav class="menu">
+        <button class="menu-item active" data-view="dashboard">
+          <span>📊</span> <span>Dashboard</span>
+        </button>
+        <button class="menu-item" data-view="products">
+          <span>🛍️</span> <span>Produits</span>
+        </button>
+        <button class="menu-item" data-view="orders">
+          <span>🧾</span> <span>Commandes</span>
+        </button>
+        <button class="menu-item" data-view="customers">
+          <span>👥</span> <span>Clients</span>
+        </button>
+        <button class="menu-item" data-view="settings">
+          <span>⚙️</span> <span>Paramètres</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="toggleTheme" class="btn-secondary w-100">Mode sombre</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="searchbar">
+          <input id="globalSearch" type="text" placeholder="Rechercher produits, commandes, clients..." />
+          <button id="clearSearch" class="icon-btn" title="Effacer">✖</button>
+        </div>
+        <div class="top-actions">
+          <button id="openCart" class="btn-primary">Panier 🛒 <span id="cartCount" class="badge">0</span></button>
+          <button id="addProductBtn" class="btn-success">+ Produit</button>
+        </div>
+      </header>
+
+      <section id="view-dashboard" class="view active">
+        <div class="grid-3">
+          <div class="card stat">
+            <div class="stat-label">Chiffre d'affaires (mois)</div>
+            <div class="stat-value" id="revMonth">—</div>
+            <div class="stat-trend up" id="revTrend">+0%</div>
+          </div>
+          <div class="card stat">
+            <div class="stat-label">Commandes</div>
+            <div class="stat-value" id="orderCount">—</div>
+            <div class="stat-trend" id="orderTrend">0 aj.</div>
+          </div>
+          <div class="card stat">
+            <div class="stat-label">Clients</div>
+            <div class="stat-value" id="customerCount">—</div>
+            <div class="stat-trend" id="customerTrend">0 nouv.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Produits en vedette</h3>
+            <div class="actions">
+              <select id="dashboardCategoryFilter" class="select">
+                <option value="">Toutes catégories</option>
+              </select>
+            </div>
+          </div>
+          <div id="featuredProducts" class="product-grid"></div>
+        </div>
+      </section>
+
+      <section id="view-products" class="view">
+        <div class="card">
+          <div class="card-header">
+            <h3>Catalogue produits</h3>
+            <div class="actions">
+              <select id="categoryFilter" class="select">
+                <option value="">Toutes catégories</option>
+              </select>
+              <select id="stockFilter" class="select">
+                <option value="">Stock: Tous</option>
+                <option value="in">En stock</option>
+                <option value="low">Stock bas</option>
+                <option value="out">Rupture</option>
+              </select>
+            </div>
+          </div>
+          <div id="productGrid" class="product-grid"></div>
+        </div>
+      </section>
+
+      <section id="view-orders" class="view">
+        <div class="card">
+          <div class="card-header">
+            <h3>Commandes</h3>
+            <div class="actions">
+              <select id="orderStatusFilter" class="select">
+                <option value="">Tous statuts</option>
+                <option value="pending">En attente</option>
+                <option value="paid">Payée</option>
+                <option value="shipped">Expédiée</option>
+                <option value="cancelled">Annulée</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Client</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="ordersTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-customers" class="view">
+        <div class="card">
+          <div class="card-header">
+            <h3>Clients</h3>
+            <div class="actions">
+              <button id="addCustomerBtn" class="btn-success">+ Client</button>
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Nom</th>
+                  <th>Téléphone</th>
+                  <th>Email</th>
+                  <th>Commandes</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="customersTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-settings" class="view">
+        <div class="card">
+          <div class="card-header">
+            <h3>Paramètres</h3>
+          </div>
+          <div class="settings-grid">
+            <div class="setting-item">
+              <label>Devise</label>
+              <select id="currencySelect" class="select">
+                <option value="XOF">XOF — Franc CFA</option>
+                <option value="EUR">EUR — Euro</option>
+                <option value="USD">USD — Dollar</option>
+              </select>
+            </div>
+            <div class="setting-item">
+              <label>Taxe (%)</label>
+              <input id="taxRateInput" type="number" min="0" max="50" step="0.5" class="input" />
+            </div>
+            <div class="setting-item">
+              <label>Nom de la boutique</label>
+              <input id="shopNameInput" type="text" class="input" placeholder="Ex: Boutique Baoro" />
+            </div>
+            <div class="setting-item">
+              <button id="saveSettingsBtn" class="btn-primary">Enregistrer</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Panier -->
+  <aside id="cartDrawer" class="drawer">
+    <div class="drawer-header">
+      <h3>Panier</h3>
+      <button class="icon-btn" id="closeCart">✖</button>
+    </div>
+    <div id="cartItems" class="cart-items"></div>
+    <div class="drawer-footer">
+      <div class="totals">
+        <div><span>Sous-total:</span> <strong id="cartSubtotal">—</strong></div>
+        <div><span>Taxe:</span> <strong id="cartTax">—</strong></div>
+        <div><span>Total:</span> <strong id="cartTotal">—</strong></div>
+      </div>
+      <button id="checkoutBtn" class="btn-primary w-100">Valider la commande</button>
+    </div>
+  </aside>
+
+  <!-- Modale Produit -->
+  <div id="productModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="productModalTitle">Ajouter un produit</h3>
+        <button class="icon-btn" id="closeProductModal">✖</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-item">
+            <label>Nom</label>
+            <input id="prodName" type="text" class="input" required />
+          </div>
+          <div class="form-item">
+            <label>Catégorie</label>
+            <input id="prodCategory" type="text" class="input" placeholder="Ex: Électronique" />
+          </div>
+          <div class="form-item">
+            <label>Prix</label>
+            <input id="prodPrice" type="number" class="input" min="0" step="0.01" />
+          </div>
+          <div class="form-item">
+            <label>Stock</label>
+            <input id="prodStock" type="number" class="input" min="0" step="1" />
+          </div>
+          <div class="form-item">
+            <label>Image (URL)</label>
+            <input id="prodImage" type="url" class="input" placeholder="https://..." />
+          </div>
+          <div class="form-item">
+            <label>Description</label>
+            <textarea id="prodDesc" class="input" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="saveProductBtn" class="btn-primary">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modale Client -->
+  <div id="customerModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="customerModalTitle">Ajouter un client</h3>
+        <button class="icon-btn" id="closeCustomerModal">✖</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-item">
+            <label>Nom</label>
+            <input id="custName" type="text" class="input" required />
+          </div>
+          <div class="form-item">
+            <label>Téléphone</label>
+            <input id="custPhone" type="tel" class="input" />
+          </div>
+          <div class="form-item">
+            <label>Email</label>
+            <input id="custEmail" type="email" class="input" />
+          </div>
+          <div class="form-item">
+            <label>Adresse</label>
+            <input id="custAddress" type="text" class="input" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="saveCustomerBtn" class="btn-primary">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast notifications -->
+  <div id="toast" class="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
